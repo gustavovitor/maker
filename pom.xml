@@ -9,7 +9,7 @@
     </parent>
     <groupId>br.com.gustavomiranda</groupId>
     <artifactId>maker</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>maker</name>
     <description>Uma abstração em Java de repositórios, serviços e controladores para acelerar o desenvolvimento de
         RestAPIs.
@@ -183,7 +183,7 @@
         <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
         <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
         <url>https://github.com/dexecutor/dependent-tasks-executor</url>
-        <tag>maker-0.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
