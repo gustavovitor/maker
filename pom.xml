@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.gustavomiranda</groupId>
     <artifactId>maker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>maker</name>
     <description>Uma abstração em Java de repositórios, serviços e controladores para acelerar o desenvolvimento de
         RestAPIs.
