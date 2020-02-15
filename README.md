@@ -5,6 +5,13 @@ This project makes available to you three pre-coded interfaces, and help you to 
 
 You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and Pageable search.
 
+#### Maven Dependency
+    <dependency>
+        <groupId>com.github.gustavovitor</groupId>
+        <artifactId>maker</artifactId>
+        <version>0.0.1</version>
+    </dependency>
+
 # Let me show how this work
 
 Note: this project use Spring Specification to make find on your database and Spring Security basic dependencies, so, if you want to use this without Spring Security, you need to disable SecurityAutoConfiguration.class on your SpringBootApplication.
