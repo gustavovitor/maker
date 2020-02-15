@@ -72,5 +72,5 @@ Now you have a lot of RestAPI methods and you can call them. Open your terminal 
 
 One example lives on https://github.com/gustavovitor/maker-example :)
 
-Any question/bugs/problems? Open an issue.
+Any question/bugs/problems/feature? Open an issue and contribute.
 
