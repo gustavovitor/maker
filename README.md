@@ -7,9 +7,9 @@ You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and
 
 # Let me show how this work
 
-Note: this project use Spring Specification to make find on your database.
+Note: this project use Spring Specification to make find on your database and Spring Security basic dependencies, so, if you want to use this without Spring Security, you need to disable SecurityAutoConfiguration.class on your SpringBootApplication.
 
-On normal development RestAPI using Spring Framework, you shold be to create a domain/model, right? Well, thats 
+On normal RestAPI development using Spring Framework, you shold be to create a domain/model, right? Well, thats 
 think is perfect, you have created your entity, for example (using Lombok @Data):
 
     @Data
@@ -19,7 +19,7 @@ think is perfect, you have created your entity, for example (using Lombok @Data)
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         
-        private String Model; 
+        private String model; 
     }
 
 Now, you want to create your repository, right? In this moment, Maker can help you.
@@ -32,24 +32,23 @@ Now, you need to create a Specification for this entity, thats step is required 
 
     public class CarSpecification extends SpecificationBase<Car> {
     
-        public CarSpecification(Car car) {
+        public CarSpecification(Car car) throws ReflectionException {
             super(car);
         }
-            
+    
         @Override
-        public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) { 
+        public Predicate toPredicate(Root<Car> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
-            
+    
             if (nonNull(getObject().getModel())) {
-                predicates.add(criteriaBuilder.equal(root.get("model"), getObject().getModel()));
+                predicates.add(criteriaBuilder.like(root.get("model"), "%" + getObject().getModel() + "%"));
             }
-            
+    
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         }
-        
     }
 
-Alright, the RepositoryMaker calls Specification.toPredicate inside Spring Framework, and call this @Override method and you can make your conditional search here, its very easy.
+Alright, the RepositoryMaker calls Specification.toPredicate inside Spring Framework, and call this overrided method and you can make your conditional search here, its very easy.
 
 Now, you want to create a service to provide access to your database object.
     
@@ -58,12 +57,12 @@ Now, you want to create a service to provide access to your database object.
     
 Car, Long, Car? What?
 
-In your specification you can spec any object, defaults you need to search one Car, but you can pass here any object for spec, for example, you have a LocalDateTime comparison, you need to create a specification with
+In your specification you can spec any object, by default, you need to search one Car, but you can pass here any object for spec, for example, you have a LocalDateTime comparison, you need to create a specification with
 start LocalDateTime and end LocalDateTime, and more spec's, in this situation you need to create a new object to spec.
 
 And now? What my projects do? Now your project provide a CarService, with a lot of pre-coded methods, includes one findAll/findAllPageable/insert/update/patch/delete.
 
-Oh my God, so i need to create one resource to make my API? Yes, and Maker mades it for you!
+So i need to create one resource to make my API? Yes, and Maker mades it for you!
 
     @RestController
     @RequestMapping("/car")
@@ -71,7 +70,7 @@ Oh my God, so i need to create one resource to make my API? Yes, and Maker mades
     
 Now you have a lot of RestAPI methods and you can call them. Open your terminal and make a call on your server:port/context/car and enjoy!
 
-This example lives on https://github.com/gustavovitor/maker-example :)
+One example lives on https://github.com/gustavovitor/maker-example :)
 
 Any question/bugs/problems? Open an issue.
 
