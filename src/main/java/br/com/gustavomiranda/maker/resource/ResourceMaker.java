@@ -18,7 +18,7 @@ import java.util.List;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class ResourceMaker<S extends ServiceMaker, T> implements ResourceInterface<S, T> {
+public class ResourceMaker<S extends ServiceMaker, T, ID> implements ResourceInterface<S, T, ID> {
 
     @Autowired
     private S service;
@@ -29,7 +29,7 @@ public class ResourceMaker<S extends ServiceMaker, T> implements ResourceInterfa
 
     @Override
     @GetMapping("{objectId}")
-    public ResponseEntity<T> findById(@PathVariable("objectId") Long objectId) {
+    public ResponseEntity<T> findById(@PathVariable("objectId") ID objectId) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.findById(objectId));
     }
 
@@ -53,20 +53,20 @@ public class ResourceMaker<S extends ServiceMaker, T> implements ResourceInterfa
 
     @Override
     @PutMapping("/{objectId}")
-    public ResponseEntity<T> update(@PathVariable Long objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
-    public ResponseEntity<T> patch(@PathVariable Long objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 
     @Override
     @DeleteMapping("/{objectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long objectId) {
+    public void delete(@PathVariable ID objectId) {
         service.delete(objectId);
     }
 

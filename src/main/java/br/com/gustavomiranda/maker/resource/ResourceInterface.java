@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import javax.management.ReflectionException;
 import java.util.List;
 
-public interface ResourceInterface<S extends ServiceMaker, T> {
-    ResponseEntity<T> findById(Long objectId);
+public interface ResourceInterface<S extends ServiceMaker, T, ID> {
+    ResponseEntity<T> findById(ID objectId);
 
     ResponseEntity<List<T>> findAll(T object) throws ReflectionException;
 
@@ -17,9 +17,9 @@ public interface ResourceInterface<S extends ServiceMaker, T> {
 
     ResponseEntity<T> insert(T object);
 
-    ResponseEntity<T> update(Long objectId, T object);
+    ResponseEntity<T> update(ID objectId, T object);
 
-    ResponseEntity<T> patch(Long objectId, T object);
+    ResponseEntity<T> patch(ID objectId, T object);
 
-    void delete(Long objectId);
+    void delete(ID objectId);
 }

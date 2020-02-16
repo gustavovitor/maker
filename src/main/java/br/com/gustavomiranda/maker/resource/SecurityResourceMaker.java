@@ -19,7 +19,7 @@ import java.util.List;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class SecurityResourceMaker<S extends ServiceMaker, T> implements ResourceInterface<S, T> {
+public class SecurityResourceMaker<S extends ServiceMaker, T, ID> implements ResourceInterface<S, T, ID> {
 
     @Autowired
     private S service;
@@ -31,7 +31,7 @@ public class SecurityResourceMaker<S extends ServiceMaker, T> implements Resourc
     @Override
     @GetMapping("{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<T> findById(@PathVariable("objectId") Long objectId) {
+    public ResponseEntity<T> findById(@PathVariable("objectId") ID objectId) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.findById(objectId));
     }
 
@@ -59,14 +59,14 @@ public class SecurityResourceMaker<S extends ServiceMaker, T> implements Resourc
     @Override
     @PutMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> update(@PathVariable Long objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> patch(@PathVariable Long objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 
@@ -74,7 +74,7 @@ public class SecurityResourceMaker<S extends ServiceMaker, T> implements Resourc
     @DeleteMapping("/{objectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority(#root.this.roleDelete)")
-    public void delete(@PathVariable Long objectId) {
+    public void delete(@PathVariable ID objectId) {
         service.delete(objectId);
     }
 
