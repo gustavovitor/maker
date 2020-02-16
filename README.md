@@ -9,7 +9,7 @@ You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
         <artifactId>maker</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </dependency>
 
 # Let me show how this work
