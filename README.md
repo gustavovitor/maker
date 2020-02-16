@@ -73,7 +73,7 @@ So i need to create one resource to make my API? Yes, and Maker mades it for you
 
     @RestController
     @RequestMapping("/car")
-    public class CarResource extends ResourceMaker<CarService, Car> {}
+    public class CarResource extends ResourceMaker<CarService, Car, Long> {}
     
 Now you have a lot of RestAPI methods and you can call them. Open your terminal and make a call on your server:port/context/car and enjoy!
 
