@@ -5,12 +5,23 @@ This project makes available to you three pre-coded interfaces, and help you to 
 
 You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and Pageable search.
 
+**Now supports Mongo! :)**
+
+What kind of technologies are used in this project?
+
+- Spring Framework
+- JPA on Maker SQL
+- QueryQsl on Maker Mongo
+- JpaSpecificationExecutor or QueryQsl with a easy'ly usage with SpecificationBase<T\>
+
 #### Maven Dependency
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
-        <artifactId>maker</artifactId>
-        <version>0.0.2</version>
+        <artifactId>maker-sql</artifactId>
+        <version>0.0.3</version>
     </dependency>
+
+..or, you can use maker-mongo for MongoDB usage.
 
 # Let me show how this work
 
@@ -78,6 +89,8 @@ So i need to create one resource to make my API? Yes, and Maker mades it for you
 Now you have a lot of RestAPI methods and you can call them. Open your terminal and make a call on your server:port/context/car and enjoy!
 
 One example lives on https://github.com/gustavovitor/maker-example :)
+
+For a Maker Mongo example thats lives on https://github.com/gustavovitor/maker-example/tree/maker-mongo :)
 
 Any question/bugs/problems/feature? Open an issue and contribute.
 
