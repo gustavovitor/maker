@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import javax.management.ReflectionException;
 import java.util.List;
 
-public interface ResourceInterface<S extends ServiceMaker, T, ID> {
+public interface ResourceInterface<S extends ServiceMaker, T, ID, SPO> {
     ResponseEntity<T> findById(ID objectId);
 
     ResponseEntity<List<T>> findAll(T object) throws ReflectionException;
 
-    ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<T> request) throws ReflectionException;
+    ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException;
 
     ResponseEntity<T> insert(T object);
 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
+import javax.validation.Valid;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
-public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP extends MongoSpecificationBase<T>> implements MongoServiceInterface<T, ID, SPO> {
+public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP extends MongoSpecificationBase<SPO>> implements MongoServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;
@@ -56,12 +57,12 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public T insert(T object) {
-        return (T) repository.save(object);
+    public T insert(@Valid T object) {
+        return (T) repository.insert(object);
     }
 
     @Override
-    public T update(ID objectId, T object) {
+    public T update(ID objectId, @Valid T object) {
         T savedObject = findById(objectId);
         BeanUtils.copyProperties(object, savedObject);
         return (T) repository.save(savedObject);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
+import javax.validation.Valid;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -57,12 +58,12 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public T insert(T object) {
+    public T insert(@Valid T object) {
         return (T) repository.save(object);
     }
 
     @Override
-    public T update(ID objectId, T object) {
+    public T update(ID objectId, @Valid T object) {
         T savedObject = findById(objectId);
         BeanUtils.copyProperties(object, savedObject);
         return (T) repository.save(savedObject);

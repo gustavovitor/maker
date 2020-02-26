@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class MongoResourceMaker<S extends MongoServiceMaker, T, ID> implements MongoResourceInterface<S, T, ID> {
+public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> implements MongoResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;
@@ -40,25 +40,25 @@ public class MongoResourceMaker<S extends MongoServiceMaker, T, ID> implements M
 
     @Override
     @PutMapping("/search/page")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<T> request) throws ReflectionException {
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<T> insert(@RequestBody @Valid T object) {
+    public ResponseEntity<T> insert(@RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.status(HttpStatus.CREATED).body(service.insert(object));
     }
 
     @Override
     @PutMapping("/{objectId}")
-    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

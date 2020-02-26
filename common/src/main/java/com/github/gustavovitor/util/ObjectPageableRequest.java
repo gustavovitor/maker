@@ -8,10 +8,10 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ObjectPageableRequest<T> {
+public class ObjectPageableRequest<SPO> {
 
     @JsonProperty("object")
-    T object;
+    SPO object;
 
     @JsonProperty("pageable")
     RequestPageable pageable;

@@ -18,7 +18,7 @@ import java.util.List;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class ResourceMaker<S extends ServiceMaker, T, ID> implements ResourceInterface<S, T, ID> {
+public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;
@@ -41,25 +41,25 @@ public class ResourceMaker<S extends ServiceMaker, T, ID> implements ResourceInt
 
     @Override
     @PutMapping("/search/page")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<T> request) throws ReflectionException {
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<T> insert(@RequestBody @Valid T object) {
+    public ResponseEntity<T> insert(@RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.status(HttpStatus.CREATED).body(service.insert(object));
     }
 
     @Override
     @PutMapping("/{objectId}")
-    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

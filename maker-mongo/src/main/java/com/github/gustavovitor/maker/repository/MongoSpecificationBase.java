@@ -11,16 +11,16 @@ import java.util.Objects;
 import static java.util.Objects.isNull;
 
 @SuppressWarnings("unchecked")
-public class MongoSpecificationBase<T> {
+public class MongoSpecificationBase<SPO> {
 
-    T object;
+    SPO object;
 
-    protected T getObject() { return this.object; }
+    protected SPO getObject() { return this.object; }
 
-    public MongoSpecificationBase(T object) throws ReflectionException {
+    public MongoSpecificationBase(SPO object) throws ReflectionException {
         if (isNull(object)) {
             try {
-                object = (T) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), MongoSpecificationBase.class))[0].getConstructor().newInstance();
+                object = (SPO) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), MongoSpecificationBase.class))[0].getConstructor().newInstance();
             } catch (InstantiationException e) {
                 throw new ReflectionException(e, MessageUtil.getMessage("entity.instance.error", e.getMessage(), object.getClass().getName()));
             } catch (InvocationTargetException e) {

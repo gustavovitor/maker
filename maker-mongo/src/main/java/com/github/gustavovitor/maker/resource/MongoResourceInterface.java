@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 
 import javax.management.ReflectionException;
 
-public interface MongoResourceInterface<S extends MongoServiceMaker, T, ID> {
+public interface MongoResourceInterface<S extends MongoServiceMaker, T, ID, SPO> {
     ResponseEntity<T> findById(ID objectId);
 
     ResponseEntity<Iterable<T>> findAll(T object) throws ReflectionException;
 
-    ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<T> request) throws ReflectionException;
+    ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException;
 
     ResponseEntity<T> insert(T object);
 
