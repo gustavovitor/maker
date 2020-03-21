@@ -18,7 +18,7 @@ What kind of technologies are used in this project?
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
         <artifactId>maker-sql</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </dependency>
 
 ..or, you can use maker-mongo for MongoDB usage.
