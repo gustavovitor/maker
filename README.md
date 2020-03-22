@@ -21,7 +21,7 @@ and call API methods from Postman. Enjoy :)
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
         <artifactId>maker-sql</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
     </dependency>
 
 ..or, you can use maker-mongo for MongoDB usage.
