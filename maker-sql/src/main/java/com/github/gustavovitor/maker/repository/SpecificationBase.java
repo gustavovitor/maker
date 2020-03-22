@@ -22,10 +22,12 @@ public class SpecificationBase<T> implements Specification<T> {
 
     protected T getObject() { return this.object; }
 
+    public SpecificationBase() { }
+
     public SpecificationBase(T object) throws ReflectionException {
         if (isNull(object)) {
             try {
-                object = (T) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), SpecificationBase.class))[0].getConstructor().newInstance();
+                object = (T) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), SpecificationBase.class))[1].getConstructor().newInstance();
             } catch (InstantiationException e) {
                 throw new ReflectionException(e, MessageUtil.getMessage("entity.instance.error", e.getMessage(), object.getClass().getName()));
             } catch (InvocationTargetException e) {

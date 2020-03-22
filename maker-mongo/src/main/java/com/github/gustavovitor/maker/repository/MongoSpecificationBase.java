@@ -17,10 +17,12 @@ public class MongoSpecificationBase<SPO> {
 
     protected SPO getObject() { return this.object; }
 
+    public MongoSpecificationBase() { }
+
     public MongoSpecificationBase(SPO object) throws ReflectionException {
         if (isNull(object)) {
             try {
-                object = (SPO) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), MongoSpecificationBase.class))[0].getConstructor().newInstance();
+                object = (SPO) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), MongoSpecificationBase.class))[1].getConstructor().newInstance();
             } catch (InstantiationException e) {
                 throw new ReflectionException(e, MessageUtil.getMessage("entity.instance.error", e.getMessage(), object.getClass().getName()));
             } catch (InvocationTargetException e) {

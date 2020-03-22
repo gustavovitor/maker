@@ -1,5 +1,6 @@
 package com.github.gustavovitor.maker.resource;
 
+import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.ServiceMaker;
 import com.github.gustavovitor.util.ObjectPageableRequest;
 import com.github.gustavovitor.util.RequestPageable;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
-import javax.validation.Valid;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -35,7 +35,7 @@ public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements Resour
 
     @Override
     @PutMapping("/search")
-    public ResponseEntity<List<T>> findAll(@RequestBody T object) throws ReflectionException {
+    public ResponseEntity<Iterable<T>> findAll(@RequestBody T object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 

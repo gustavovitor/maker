@@ -1,13 +1,12 @@
-package com.github.gustavovitor.maker.resource;
+package com.github.gustavovitor.interfaces;
 
-import com.github.gustavovitor.maker.service.MongoServiceMaker;
 import com.github.gustavovitor.util.ObjectPageableRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import javax.management.ReflectionException;
 
-public interface MongoResourceInterface<S extends MongoServiceMaker, T, ID, SPO> {
+public interface ResourceInterface<S extends ServiceInterface, T, ID, SPO> {
     ResponseEntity<T> findById(ID objectId);
 
     ResponseEntity<Iterable<T>> findAll(T object) throws ReflectionException;

@@ -1,5 +1,6 @@
 package com.github.gustavovitor.maker.resource;
 
+import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.MongoServiceMaker;
 import com.github.gustavovitor.util.ObjectPageableRequest;
 import com.github.gustavovitor.util.RequestPageable;
@@ -12,12 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
-import javax.validation.Valid;
 
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> implements MongoResourceInterface<S, T, ID, SPO> {
+public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;

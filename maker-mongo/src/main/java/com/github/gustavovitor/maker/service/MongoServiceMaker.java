@@ -1,5 +1,6 @@
 package com.github.gustavovitor.maker.service;
 
+import com.github.gustavovitor.interfaces.ServiceInterface;
 import com.github.gustavovitor.maker.repository.MongoRepositoryMaker;
 import com.github.gustavovitor.maker.repository.MongoSpecificationBase;
 import com.github.gustavovitor.util.MessageUtil;
@@ -21,7 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
-public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP extends MongoSpecificationBase<SPO>> implements MongoServiceInterface<T, ID, SPO> {
+public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP extends MongoSpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;
@@ -36,7 +37,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         try {
             Constructor[] constructors = (Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), MongoServiceMaker.class))[4]).getDeclaredConstructors();
             if (constructors.length > 0) {
-                Constructor<SP> specificationConstructor = (Constructor<SP>) constructors[0];
+                Constructor<SP> specificationConstructor = (Constructor<SP>) constructors[1];
                 this.specification = specificationConstructor.newInstance(object);
                 return specification;
             } else {
@@ -89,6 +90,26 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     @Override
     public T findById(ID objectId) {
         return (T) repository.findById(objectId).orElse(null);
+    }
+
+    @Override
+    public void beforeInsert(T object) {
+
+    }
+
+    @Override
+    public void beforeUpdate(ID objectId, T object) {
+
+    }
+
+    @Override
+    public void beforePatch(T object) {
+
+    }
+
+    @Override
+    public void beforeDelete(ID objectId) {
+
     }
 
     private String[] getNullPropertyNames(T source) {

@@ -1,20 +1,23 @@
-package com.github.gustavovitor.maker.service;
+package com.github.gustavovitor.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
-import java.util.List;
 
-public interface MongoServiceInterface<T, ID, SP> {
+public interface ServiceInterface<T, ID, SP> {
     Page<T> findAllPageable(SP object, Pageable pageable) throws ReflectionException;
 
+    void beforeInsert(T object);
     T insert(T object);
 
+    void beforeUpdate(ID objectId, T object);
     T update(ID objectId, T object);
 
+    void beforePatch(T object);
     T patch(ID objectId, T object, String... ignoreProperties);
 
+    void beforeDelete(ID objectId);
     void delete(ID objectId);
 
     Iterable<T> findAll(SP object) throws ReflectionException;
