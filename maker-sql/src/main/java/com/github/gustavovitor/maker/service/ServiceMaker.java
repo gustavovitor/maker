@@ -36,20 +36,17 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     protected SP getSpecification(SPO object) throws ReflectionException {
         try {
-            Constructor[] constructors = (Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), ServiceMaker.class))[4]).getDeclaredConstructors();
-            if (constructors.length > 0) {
-                Constructor<SP> specificationConstructor = (Constructor<SP>) constructors[1];
-                this.specification = specificationConstructor.newInstance(object);
-                return specification;
-            } else {
-                throw new ReflectionException(new NoSuchMethodException(), MessageUtil.getMessage("specification.sem.construtor"));
-            }
+            Constructor<SP> specificationConstructor = (Constructor<SP>) (Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), ServiceMaker.class))[4]).getConstructor(object.getClass());
+            this.specification = specificationConstructor.newInstance(object);
+            return specification;
         } catch (InstantiationException e) {
             throw new ReflectionException(e, MessageUtil.getMessage("entity.instance.error", e.getMessage(), object.getClass().getName()));
         } catch (InvocationTargetException e) {
             throw new ReflectionException(e, MessageUtil.getMessage("entity.invoque.error", e.getMessage(), object.getClass().getName()));
         } catch (IllegalAccessException e) {
             throw new ReflectionException(e, MessageUtil.getMessage("entity.illegal.access.error", e.getMessage(), object.getClass().getName()));
+        } catch (NoSuchMethodException e) {
+            throw new ReflectionException(e, MessageUtil.getMessage("no.such.method.error", e.getMessage(), object.getClass().getName()));
         }
     }
 
