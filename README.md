@@ -24,8 +24,8 @@ What kind of technologies are used in this project?
 
 - Spring Framework
 - JPA on Maker SQL
-- QueryQsl on Maker Mongo
-- JpaSpecificationExecutor or QueryQsl with a easy'ly usage with SpecificationBase<T\>
+- QueryDsl on Maker Mongo
+- JpaSpecificationExecutor or QueryDsl with a easy'ly usage with SpecificationBase<T\>
 
 You can see what this project doo on "Maker.postman_collection.json" inside the project. Download the sample (https://github.com/gustavovitor/maker-example/tree/maker-mongo), run
 and call API methods from Postman. Enjoy :)
