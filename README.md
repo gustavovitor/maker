@@ -1,7 +1,9 @@
 <p align="center">
   <img src="https://i.imgur.com/uIKnSxD.png">
+
+  [![node](https://img.shields.io/badge/Maker-0.0.6-lightgray.svg)](https://github.com/gustavovitor/maker/tree/0.0.6)
+
 </p>
-<hr>
 
 Make your API better, create your own pattern and go to the stars!
 
