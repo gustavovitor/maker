@@ -38,7 +38,7 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
     @Override
     @PutMapping("/search")
     @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<Iterable<T>> findAll(@RequestBody T object) throws ReflectionException {
+    public ResponseEntity<Iterable<T>> findAll(@RequestBody SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 

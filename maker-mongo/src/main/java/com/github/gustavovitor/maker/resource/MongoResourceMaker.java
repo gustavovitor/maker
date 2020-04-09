@@ -34,7 +34,7 @@ public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> impleme
 
     @Override
     @PutMapping("/search")
-    public ResponseEntity<Iterable<T>> findAll(@RequestBody T object) throws ReflectionException {
+    public ResponseEntity<Iterable<T>> findAll(@RequestBody SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 

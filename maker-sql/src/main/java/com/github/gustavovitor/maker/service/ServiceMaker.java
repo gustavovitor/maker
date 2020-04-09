@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
-public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends SpecificationBase<T>> implements ServiceInterface<T, ID, SPO> {
+public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends SpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;

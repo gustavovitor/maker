@@ -9,7 +9,7 @@ import javax.management.ReflectionException;
 public interface ResourceInterface<S extends ServiceInterface, T, ID, SPO> {
     ResponseEntity<T> findById(ID objectId);
 
-    ResponseEntity<Iterable<T>> findAll(T object) throws ReflectionException;
+    ResponseEntity<Iterable<T>> findAll(SPO object) throws ReflectionException;
 
     ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException;
 
