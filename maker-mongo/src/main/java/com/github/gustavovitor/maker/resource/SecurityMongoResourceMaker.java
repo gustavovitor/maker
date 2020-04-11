@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
+import javax.validation.Valid;
 
 import static java.util.Objects.nonNull;
 
@@ -51,21 +52,21 @@ public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO>
     @Override
     @PostMapping
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> insert(@RequestBody T object) {
+    public ResponseEntity<T> insert(@RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.status(HttpStatus.CREATED).body(service.insert(object));
     }
 
     @Override
     @PutMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
+import javax.validation.Valid;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -47,19 +48,19 @@ public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements Resour
 
     @Override
     @PostMapping
-    public ResponseEntity<T> insert(@RequestBody T object) {
+    public ResponseEntity<T> insert(@RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.status(HttpStatus.CREATED).body(service.insert(object));
     }
 
     @Override
     @PutMapping("/{objectId}")
-    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody T object) {
+    public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

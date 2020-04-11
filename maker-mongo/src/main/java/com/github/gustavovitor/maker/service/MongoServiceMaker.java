@@ -55,12 +55,12 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public T insert(@Valid T object) {
+    public T insert(T object) {
         return (T) repository.insert(object);
     }
 
     @Override
-    public T update(ID objectId, @Valid T object) {
+    public T update(ID objectId, T object) {
         T savedObject = findById(objectId);
         BeanUtils.copyProperties(object, savedObject);
         return (T) repository.save(savedObject);
