@@ -15,7 +15,7 @@
     </parent>
     <groupId>com.github.gustavovitor</groupId>
     <artifactId>maker</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <name>maker</name>
     <description>Uma abstração em Java de repositórios, serviços e controladores para acelerar o desenvolvimento de
         RestAPIs.

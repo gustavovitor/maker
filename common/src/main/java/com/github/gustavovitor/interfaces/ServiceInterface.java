@@ -11,13 +11,13 @@ public interface ServiceInterface<T, ID, SP> {
     void beforeInsert(T object);
     T insert(T object);
 
-    void beforeUpdate(ID objectId, T object);
+    void beforeUpdate(T savedObject, T object);
     T update(ID objectId, T object);
 
-    void beforePatch(T object);
+    void beforePatch(T savedObject, T object);
     T patch(ID objectId, T object, String... ignoreProperties);
 
-    void beforeDelete(ID objectId);
+    void beforeDelete(T objectId);
     void delete(ID objectId);
 
     Iterable<T> findAll(SP object) throws ReflectionException;

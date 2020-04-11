@@ -57,12 +57,14 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     @Override
     public T insert(T object) {
+        beforeInsert(object);
         return (T) repository.save(object);
     }
 
     @Override
     public T update(ID objectId, T object) {
         T savedObject = findById(objectId);
+        beforeUpdate(savedObject, object);
         BeanUtils.copyProperties(object, savedObject);
         return (T) repository.save(savedObject);
     }
@@ -70,6 +72,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     @Override
     public T patch(ID objectId, T object, String... ignoreProperties) {
         T savedObject = findById(objectId);
+        beforePatch(savedObject, object);
         BeanUtils.copyProperties(object, savedObject, ArrayUtils.addAll(ignoreProperties, getNullPropertyNames(object)));
         return (T) repository.save(savedObject);
     }
@@ -77,6 +80,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     @Override
     public void delete(ID objectId) {
         T object = findById(objectId);
+        beforeDelete(object);
         repository.delete(object);
     }
 
@@ -96,17 +100,17 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public void beforeUpdate(ID objectId, T object) {
+    public void beforeUpdate(T savedObject, T object) {
 
     }
 
     @Override
-    public void beforePatch(T object) {
+    public void beforePatch(T savedObject, T object) {
 
     }
 
     @Override
-    public void beforeDelete(ID objectId) {
+    public void beforeDelete(T object) {
 
     }
 
