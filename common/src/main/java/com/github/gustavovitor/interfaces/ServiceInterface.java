@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
+import java.util.Map;
 
 public interface ServiceInterface<T, ID, SP> {
     Page<T> findAllPageable(SP object, Pageable pageable) throws ReflectionException;
@@ -14,8 +15,8 @@ public interface ServiceInterface<T, ID, SP> {
     void beforeUpdate(T savedObject, T object);
     T update(ID objectId, T object);
 
-    void beforePatch(T savedObject, T object);
-    T patch(ID objectId, T object, String... ignoreProperties);
+    void beforePatch(T savedObject, Map<String, Object> object);
+    T patch(ID objectId, Map<String, Object> object, String... ignoreProperties);
 
     void beforeDelete(T objectId);
     void delete(ID objectId);

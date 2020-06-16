@@ -3,6 +3,7 @@ package com.github.gustavovitor.maker.service;
 import com.github.gustavovitor.interfaces.ServiceInterface;
 import com.github.gustavovitor.maker.repository.MongoRepositoryMaker;
 import com.github.gustavovitor.maker.repository.MongoSpecificationBase;
+import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -69,10 +71,10 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public T patch(ID objectId, T object, String... ignoreProperties) {
+    public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         T savedObject = findById(objectId);
         beforePatch(savedObject, object);
-        BeanUtils.copyProperties(object, savedObject, ArrayUtils.addAll(ignoreProperties, getNullPropertyNames(object)));
+        EntityUtils.merge(object, savedObject, savedObject.getClass());
         return (T) repository.save(savedObject);
     }
 
@@ -104,7 +106,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public void beforePatch(T objectId, T object) {
+    public void beforePatch(T objectId, Map<String, Object> object) {
 
     }
 

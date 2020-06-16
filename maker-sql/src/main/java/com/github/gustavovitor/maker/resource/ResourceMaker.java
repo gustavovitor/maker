@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.management.ReflectionException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.nonNull;
 
@@ -35,14 +36,14 @@ public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements Resour
     }
 
     @Override
-    @PutMapping("/search")
-    public ResponseEntity<Iterable<T>> findAll(@RequestBody SPO object) throws ReflectionException {
+    @GetMapping()
+    public ResponseEntity<Iterable<T>> findAll(SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 
     @Override
-    @PutMapping("/search/page")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
+    @GetMapping("/page")
+    public ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }
 
@@ -60,7 +61,7 @@ public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements Resour
 
     @Override
     @PatchMapping("/{objectId}")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody Map<String, Object> object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

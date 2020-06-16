@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.management.ReflectionException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.nonNull;
 
@@ -37,16 +38,16 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
     }
 
     @Override
-    @PutMapping("/search")
+    @GetMapping
     @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<Iterable<T>> findAll(@RequestBody SPO object) throws ReflectionException {
+    public ResponseEntity<Iterable<T>> findAll(SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 
     @Override
-    @PutMapping("/search/page")
+    @GetMapping("/page")
     @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
+    public ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }
 
@@ -67,7 +68,7 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
     @Override
     @PatchMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody Map<String, Object> object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

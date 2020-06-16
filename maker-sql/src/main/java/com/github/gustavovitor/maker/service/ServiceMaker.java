@@ -3,6 +3,7 @@ package com.github.gustavovitor.maker.service;
 import com.github.gustavovitor.interfaces.ServiceInterface;
 import com.github.gustavovitor.maker.repository.RepositoryMaker;
 import com.github.gustavovitor.maker.repository.SpecificationBase;
+import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -70,10 +72,10 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public T patch(ID objectId, T object, String... ignoreProperties) {
+    public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         T savedObject = findById(objectId);
         beforePatch(savedObject, object);
-        BeanUtils.copyProperties(object, savedObject, ArrayUtils.addAll(ignoreProperties, getNullPropertyNames(object)));
+        EntityUtils.merge(object, savedObject, savedObject.getClass());
         return (T) repository.save(savedObject);
     }
 
@@ -105,7 +107,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public void beforePatch(T savedObject, T object) {
+    public void beforePatch(T savedObject, Map<String, Object> object) {
 
     }
 

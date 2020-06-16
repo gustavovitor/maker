@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.management.ReflectionException;
 import javax.validation.Valid;
 
+import java.util.Map;
+
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
@@ -66,7 +68,7 @@ public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO>
     @Override
     @PatchMapping("/{objectId}")
     @PreAuthorize("hasAuthority(#root.this.roleWrite)")
-    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid T object) {
+    public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody @Valid Map<String, Object> object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
 

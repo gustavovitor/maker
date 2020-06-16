@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://i.imgur.com/uIKnSxD.png">
 
-  [![node](https://img.shields.io/badge/Maker-0.0.9-lightgray.svg)](https://github.com/gustavovitor/maker/tree/0.0.9)
+  [![node](https://img.shields.io/badge/Maker-1.0.0-lightgray.svg)](https://github.com/gustavovitor/maker/tree/1.0.0)
 
 </p>
 
@@ -18,8 +18,6 @@ This project makes available to you three pre-coded interfaces, and help you to 
 
 You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and Pageable search.
 
-**Now supports Mongo! :)**
-
 What kind of technologies are used in this project?
 
 - Spring Framework
@@ -34,7 +32,7 @@ and call API methods from Postman. Enjoy :)
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
         <artifactId>maker-sql</artifactId>
-        <version>0.0.9</version>
+        <version>1.0.0</version>
     </dependency>
 
 ..or, you can use maker-mongo for MongoDB usage.

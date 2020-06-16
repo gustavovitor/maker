@@ -3,10 +3,7 @@ package com.github.gustavovitor.util;
 import lombok.*;
 import org.springframework.data.domain.Sort;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestPageable {
