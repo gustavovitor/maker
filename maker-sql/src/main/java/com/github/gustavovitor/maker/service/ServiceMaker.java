@@ -1,11 +1,11 @@
 package com.github.gustavovitor.maker.service;
 
 import com.github.gustavovitor.interfaces.ServiceInterface;
+import com.github.gustavovitor.maker.GenericErrorInterpreter;
 import com.github.gustavovitor.maker.repository.RepositoryMaker;
 import com.github.gustavovitor.maker.repository.SpecificationBase;
 import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
-import javax.validation.Valid;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -24,11 +23,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Objects.nonNull;
+
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
 public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends SpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;
+
+    @Autowired(required = false)
+    private GenericErrorInterpreter genericErrorInterpreter;
 
     private SP specification;
 
@@ -36,7 +40,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
         return repository;
     }
 
-    protected SP getSpecification(SPO object) throws ReflectionException {
+    public SP getSpecification(SPO object) throws ReflectionException {
         try {
             Constructor<SP> specificationConstructor = (Constructor<SP>) (Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), ServiceMaker.class))[4]).getConstructor(object.getClass());
             this.specification = specificationConstructor.newInstance(object);
@@ -59,31 +63,62 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     @Override
     public T insert(T object) {
-        beforeInsert(object);
-        return (T) repository.save(object);
+        try {
+            beforeInsert(object);
+            return (T) repository.save(object);
+        } catch (Exception e) {
+            if (nonNull(genericErrorInterpreter))
+                genericErrorInterpreter.onInsertError(this, repository, e, object);
+
+            onInsertError(e, object);
+            throw e;
+        }
     }
 
     @Override
     public T update(ID objectId, T object) {
-        T savedObject = findById(objectId);
-        beforeUpdate(savedObject, object);
-        BeanUtils.copyProperties(object, savedObject);
-        return (T) repository.save(savedObject);
+        try {
+            T savedObject = findById(objectId);
+            beforeUpdate(savedObject, object);
+            BeanUtils.copyProperties(object, savedObject);
+            return (T) repository.save(savedObject);
+        } catch (Exception e) {
+            if (nonNull(genericErrorInterpreter))
+                genericErrorInterpreter.onUpdateError(this, repository, e, objectId, object);
+
+            onUpdateError(e, objectId, object);
+            throw e;
+        }
     }
 
     @Override
     public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
-        T savedObject = findById(objectId);
-        beforePatch(savedObject, object);
-        EntityUtils.merge(object, savedObject, savedObject.getClass());
-        return (T) repository.save(savedObject);
+        try {
+            T savedObject = findById(objectId);
+            beforePatch(savedObject, object);
+            EntityUtils.merge(object, savedObject, savedObject.getClass());
+            return (T) repository.save(savedObject);
+        } catch (Exception e) {
+            if (nonNull(genericErrorInterpreter))
+                genericErrorInterpreter.onPatchError(this, repository, e, objectId, object);
+
+            onPatchError(e, objectId, object);
+            throw e;
+        }
     }
 
     @Override
     public void delete(ID objectId) {
         T object = findById(objectId);
-        beforeDelete(object);
-        repository.delete(object);
+        try {
+            beforeDelete(object);
+            repository.delete(object);
+        } catch (Exception e) {
+            if (nonNull(genericErrorInterpreter))
+                genericErrorInterpreter.onDeleteError(this, repository, e, object);
+
+            onDeleteError(e, object);
+        }
     }
 
     @Override
@@ -113,6 +148,26 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     @Override
     public void beforeDelete(T object) {
+
+    }
+
+    @Override
+    public void onInsertError(Throwable e, T object) {
+
+    }
+
+    @Override
+    public void onUpdateError(Throwable e, ID objectId, T object) {
+
+    }
+
+    @Override
+    public void onPatchError(Throwable e, ID objectId, Map<String, Object> object) {
+
+    }
+
+    @Override
+    public void onDeleteError(Throwable e, T object) {
 
     }
 

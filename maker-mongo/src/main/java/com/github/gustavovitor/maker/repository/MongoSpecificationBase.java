@@ -17,6 +17,10 @@ public class MongoSpecificationBase<SPO> {
 
     protected SPO getObject() { return this.object; }
 
+    protected void setObject(SPO object) {
+        this.object = object;
+    }
+
     public MongoSpecificationBase() { }
 
     public MongoSpecificationBase(SPO object) throws ReflectionException {

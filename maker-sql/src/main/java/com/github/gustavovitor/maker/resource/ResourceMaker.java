@@ -36,13 +36,13 @@ public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements Resour
     }
 
     @Override
-    @GetMapping()
+    @PutMapping("/search")
     public ResponseEntity<Iterable<T>> findAll(SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 
     @Override
-    @GetMapping("/page")
+    @PutMapping("/search/page")
     public ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }

@@ -22,6 +22,10 @@ public class SpecificationBase<T> implements Specification<T> {
 
     protected T getObject() { return this.object; }
 
+    protected void setObject(T object) {
+        this.object = object;
+    }
+
     public SpecificationBase() { }
 
     public SpecificationBase(T object) throws ReflectionException {

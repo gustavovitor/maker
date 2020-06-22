@@ -32,42 +32,42 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
 
     @Override
     @GetMapping("{objectId}")
-    @PreAuthorize("hasAuthority(#root.this.roleRead)")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleRead)")
     public ResponseEntity<T> findById(@PathVariable("objectId") ID objectId) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.findById(objectId));
     }
 
     @Override
-    @GetMapping
-    @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<Iterable<T>> findAll(SPO object) throws ReflectionException {
+    @PutMapping("/search")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleRead)")
+    public ResponseEntity<Iterable<T>> findAll(@RequestBody SPO object) throws ReflectionException {
         return ResponseEntity.ok(service.findAll(object));
     }
 
     @Override
-    @GetMapping("/page")
-    @PreAuthorize("hasAuthority(#root.this.roleRead)")
-    public ResponseEntity<Page<T>> findAllPageable(ObjectPageableRequest<SPO> request) throws ReflectionException {
+    @PutMapping("/search/page")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleRead)")
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
         return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
     }
 
     @Override
     @PostMapping
-    @PreAuthorize("hasAuthority(#root.this.roleWrite)")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleWrite)")
     public ResponseEntity<T> insert(@RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.status(HttpStatus.CREATED).body(service.insert(object));
     }
 
     @Override
     @PutMapping("/{objectId}")
-    @PreAuthorize("hasAuthority(#root.this.roleWrite)")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleWrite)")
     public ResponseEntity<T> update(@PathVariable ID objectId, @RequestBody @Valid T object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.update(objectId, object));
     }
 
     @Override
     @PatchMapping("/{objectId}")
-    @PreAuthorize("hasAuthority(#root.this.roleWrite)")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleWrite)")
     public ResponseEntity<T> patch(@PathVariable ID objectId, @RequestBody Map<String, Object> object) {
         return (ResponseEntity<T>) ResponseEntity.ok(service.patch(objectId, object));
     }
@@ -75,21 +75,21 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
     @Override
     @DeleteMapping("/{objectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority(#root.this.roleDelete)")
+    @PreAuthorize("hasAnyAuthority(#root.this.roleDelete)")
     public void delete(@PathVariable ID objectId) {
         service.delete(objectId);
     }
 
-    protected String getRoleRead() {
-        return "";
+    protected String[] getRoleRead() {
+        return new String[]{""};
     }
 
-    protected String getRoleWrite() {
-        return "";
+    protected String[] getRoleWrite() {
+        return new String[]{""};
     }
 
-    protected String getRoleDelete() {
-        return "";
+    protected String[] getRoleDelete() {
+        return new String[]{""};
     }
 
     protected Pageable getPageable(RequestPageable pageable) {
