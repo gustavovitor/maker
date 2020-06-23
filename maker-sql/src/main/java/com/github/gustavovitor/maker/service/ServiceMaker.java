@@ -1,6 +1,7 @@
 package com.github.gustavovitor.maker.service;
 
 import com.github.gustavovitor.interfaces.ServiceInterface;
+import com.github.gustavovitor.maker.GenericCallerInterpreter;
 import com.github.gustavovitor.maker.GenericErrorInterpreter;
 import com.github.gustavovitor.maker.repository.RepositoryMaker;
 import com.github.gustavovitor.maker.repository.SpecificationBase;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
+import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
@@ -33,6 +36,9 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     @Autowired(required = false)
     private GenericErrorInterpreter genericErrorInterpreter;
+
+    @Autowired(required = false)
+    private GenericCallerInterpreter genericCallerInterpreter;
 
     private SP specification;
 
@@ -64,6 +70,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     @Override
     public T insert(T object) {
         try {
+            genericCallerInterpreter.onInsert(this, repository, object);
             beforeInsert(object);
             return (T) repository.save(object);
         } catch (Exception e) {
@@ -79,6 +86,8 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     public T update(ID objectId, T object) {
         try {
             T savedObject = findById(objectId);
+            handleNotFoundException(savedObject);
+            genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             beforeUpdate(savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             return (T) repository.save(savedObject);
@@ -95,6 +104,8 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         try {
             T savedObject = findById(objectId);
+            handleNotFoundException(savedObject);
+            genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             return (T) repository.save(savedObject);
@@ -111,6 +122,8 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     public void delete(ID objectId) {
         T object = findById(objectId);
         try {
+            handleNotFoundException(object);
+            genericCallerInterpreter.onDelete(this, repository, object);
             beforeDelete(object);
             repository.delete(object);
         } catch (Exception e) {
@@ -182,6 +195,12 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
         }
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
+    }
+
+    private void handleNotFoundException(T savedObject) {
+        if (isNull(savedObject)) {
+            throw new EntityNotFoundException(MessageUtil.getMessage("entity.not.found.exception"));
+        }
     }
 
 }

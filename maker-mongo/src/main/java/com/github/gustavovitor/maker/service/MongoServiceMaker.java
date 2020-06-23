@@ -1,9 +1,11 @@
 package com.github.gustavovitor.maker.service;
 
 import com.github.gustavovitor.interfaces.ServiceInterface;
+import com.github.gustavovitor.maker.GenericCallerInterpreter;
 import com.github.gustavovitor.maker.GenericErrorInterpreter;
 import com.github.gustavovitor.maker.repository.MongoRepositoryMaker;
 import com.github.gustavovitor.maker.repository.MongoSpecificationBase;
+import com.github.gustavovitor.maker.service.exceptions.DocumentNotFoundException;
 import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
@@ -32,6 +35,9 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
 
     @Autowired(required = false)
     private GenericErrorInterpreter genericErrorInterpreter;
+
+    @Autowired
+    private GenericCallerInterpreter genericCallerInterpreter;
 
     private SP specification;
 
@@ -63,6 +69,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     @Override
     public T insert(T object) {
         try {
+            genericCallerInterpreter.onInsert(this, repository, object);
             beforeInsert(object);
             return (T) repository.insert(object);
         } catch (Exception e) {
@@ -83,6 +90,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     public T update(ID objectId, T object) {
         try {
             T savedObject = findById(objectId);
+            handleNotFoundException(savedObject);
+            genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             beforeUpdate(savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             return (T) repository.save(savedObject);
@@ -104,6 +113,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         try {
             T savedObject = findById(objectId);
+            handleNotFoundException(savedObject);
+            genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             return (T) repository.save(savedObject);
@@ -125,6 +136,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     public void delete(ID objectId) {
         T object = findById(objectId);
         try {
+            handleNotFoundException(object);
+            genericCallerInterpreter.onDelete(this, repository, object);
             beforeDelete(object);
             repository.delete(object);
         } catch (Exception e) {
@@ -182,6 +195,12 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         }
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
+    }
+
+    private void handleNotFoundException(T savedObject) {
+        if (isNull(savedObject)) {
+            throw new DocumentNotFoundException(MessageUtil.getMessage("entity.not.found.exception"));
+        }
     }
 
 }
