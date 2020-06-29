@@ -131,6 +131,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
                 genericErrorInterpreter.onDeleteError(this, repository, e, object);
 
             onDeleteError(e, object);
+            throw e;
         }
     }
 
