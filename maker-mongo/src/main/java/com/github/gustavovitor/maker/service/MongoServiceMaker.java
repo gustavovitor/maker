@@ -67,11 +67,18 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
+    public void beforeInsert(T object) {
+
+    }
+
+    @Override
     public T insert(T object) {
         try {
             genericCallerInterpreter.onInsert(this, repository, object);
             beforeInsert(object);
-            return (T) repository.insert(object);
+            T savedObject = (T) repository.insert(object);
+            afterInsert(savedObject);
+            return savedObject;
         } catch (Exception e) {
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onInsertError(this, repository, e, object);
@@ -82,7 +89,17 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
+    public void afterInsert(T object) {
+
+    }
+
+    @Override
     public void onInsertError(Throwable e, T object) {
+
+    }
+
+    @Override
+    public void beforeUpdate(T savedObject, T object) {
 
     }
 
@@ -94,7 +111,9 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
             genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             beforeUpdate(savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
-            return (T) repository.save(savedObject);
+            T savedObjectNow = (T) repository.save(savedObject);
+            afterUpdate(savedObjectNow, object);
+            return savedObjectNow;
         } catch (Exception e) {
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onUpdateError(this, repository, e, objectId, object);
@@ -105,7 +124,17 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
+    public void afterUpdate(T savedObject, T object) {
+
+    }
+
+    @Override
     public void onUpdateError(Throwable e, ID objectId, T object) {
+
+    }
+
+    @Override
+    public void beforePatch(T savedObject, Map<String, Object> object) {
 
     }
 
@@ -117,7 +146,9 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
             genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
-            return (T) repository.save(savedObject);
+            T savedObjectNow = (T) repository.save(savedObject);
+            afterPatch(savedObjectNow, object);
+            return savedObjectNow;
         } catch (Exception e) {
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onPatchError(this, repository, e, objectId, object);
@@ -128,7 +159,17 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
+    public void afterPatch(T savedObject, Map<String, Object> object) {
+
+    }
+
+    @Override
     public void onPatchError(Throwable e, ID objectId, Map<String, Object> object) {
+
+    }
+
+    @Override
+    public void beforeDelete(T object) {
 
     }
 
@@ -140,6 +181,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
             genericCallerInterpreter.onDelete(this, repository, object);
             beforeDelete(object);
             repository.delete(object);
+            afterDelete(object);
         } catch (Exception e) {
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onDeleteError(this, repository, e, object);
@@ -147,6 +189,11 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
             onDeleteError(e, object);
             throw e;
         }
+    }
+
+    @Override
+    public void afterDelete(T object) {
+
     }
 
     @Override
@@ -164,25 +211,6 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         return (T) repository.findById(objectId).orElse(null);
     }
 
-    @Override
-    public void beforeInsert(T object) {
-
-    }
-
-    @Override
-    public void beforeUpdate(T objectId, T object) {
-
-    }
-
-    @Override
-    public void beforePatch(T objectId, Map<String, Object> object) {
-
-    }
-
-    @Override
-    public void beforeDelete(T objectId) {
-
-    }
 
     private String[] getNullPropertyNames(T source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
