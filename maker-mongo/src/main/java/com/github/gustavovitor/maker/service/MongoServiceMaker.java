@@ -74,7 +74,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     @Override
     public T insert(T object) {
         try {
-            genericCallerInterpreter.onInsert(this, repository, object);
+            if (nonNull(genericCallerInterpreter))
+                genericCallerInterpreter.onInsert(this, repository, object);
             beforeInsert(object);
             T savedObject = (T) repository.insert(object);
             afterInsert(savedObject);
@@ -108,7 +109,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         try {
             T savedObject = findById(objectId);
             handleNotFoundException(savedObject);
-            genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
+            if (nonNull(genericCallerInterpreter))
+                genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             beforeUpdate(savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
@@ -143,7 +145,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         try {
             T savedObject = findById(objectId);
             handleNotFoundException(savedObject);
-            genericCallerInterpreter.onPatch(this, repository, savedObject, object);
+            if (nonNull(genericCallerInterpreter))
+                genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             T savedObjectNow = (T) repository.save(savedObject);
@@ -178,7 +181,8 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         T object = findById(objectId);
         try {
             handleNotFoundException(object);
-            genericCallerInterpreter.onDelete(this, repository, object);
+            if (nonNull(genericCallerInterpreter))
+                genericCallerInterpreter.onDelete(this, repository, object);
             beforeDelete(object);
             repository.delete(object);
             afterDelete(object);
