@@ -1,5 +1,6 @@
 package com.github.gustavovitor.maker.repository;
 
+import com.github.gustavovitor.maker.GenericSpecificationCallerInterpreter;
 import com.github.gustavovitor.util.MessageUtil;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,27 +12,32 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @SuppressWarnings("unchecked")
-public class SpecificationBase<T> implements Specification<T> {
+public class SpecificationBase<SPO> implements Specification<SPO> {
 
-    T object;
+    SPO object;
 
-    protected T getObject() { return this.object; }
+    private final GenericSpecificationCallerInterpreter genericSpecificationCallerInterpreter = GenericSpecificationCallerInterpreter.getInstance();
 
-    protected void setObject(T object) {
+    protected SPO getObject() { return this.object; }
+
+    protected void setObject(SPO object) {
         this.object = object;
     }
 
     public SpecificationBase() { }
 
-    public SpecificationBase(T object) throws ReflectionException {
+    public SpecificationBase(SPO object) throws ReflectionException {
         if (isNull(object)) {
             try {
-                object = (T) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), SpecificationBase.class))[1].getConstructor().newInstance();
+                object = (SPO) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), SpecificationBase.class))[1].getConstructor().newInstance();
             } catch (InstantiationException e) {
                 throw new ReflectionException(e, MessageUtil.getMessage("entity.instance.error", e.getMessage(), object.getClass().getName()));
             } catch (InvocationTargetException e) {
@@ -46,5 +52,22 @@ public class SpecificationBase<T> implements Specification<T> {
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) { return null; }
+    public Predicate toPredicate(Root<SPO> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (nonNull(genericSpecificationCallerInterpreter)) {
+            genericSpecificationCallerInterpreter.spec(root, criteriaQuery, criteriaBuilder, getObject(), predicates);
+        }
+
+        List<Predicate> userPredicates = predicate(root, criteriaQuery, criteriaBuilder, getObject());
+        if (nonNull(userPredicates))
+            predicates.addAll(userPredicates);
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+    }
+
+    // Rewrite here your predicate.
+    protected List<Predicate> predicate(Root<SPO> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, SPO object) {
+        return null;
+    }
 }
