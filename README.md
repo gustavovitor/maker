@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://i.imgur.com/uIKnSxD.png">
+  <img src="https://i.imgur.com/GP4BOPK.png">
 
   [![node](https://img.shields.io/badge/Maker-1.3.0-lightgray.svg)](https://github.com/gustavovitor/maker/tree/1.3.0)
-
+  feito por um brasileiro para desenvolvedores do mundo inteiro.
 </p>
 
 Make your API better, create your own pattern and go to the stars!
@@ -14,11 +14,11 @@ Make your API better, create your own pattern and go to the stars!
 # How is this?
 Boilerplate code? No more.
 
-The Maker project is an abstraction to speed up the development time of RestAPI using Spring Framework.
+The Maker project is an abstraction to speed up the development time of RestAPI's using Spring Framework.
 
-This project makes available to you three pre-coded interfaces, and help you to make your API more fast.
+This project provides you with a series of pre-coded interfaces.
 
-You can build your API in 10 minutes, with GET/POST/PUT/PATCH/DELETE methods and Pageable search.
+You can build your API in 10 minutes, with `GET/POST/PUT/PATCH/DELETE` methods and Pageable search.
 
 What kind of technologies are used in this project?
 
@@ -41,10 +41,9 @@ and call API methods from Postman. Enjoy :)
 
 # Let me show how this work
 
-Note: this project use Spring Specification to make find on your database and Spring Security basic dependencies, so, if you want to use this without Spring Security, you need to disable SecurityAutoConfiguration.class on your SpringBootApplication.
+**Note:** this project use Spring Specification to make find on your database and Spring Security basic dependencies, so, if you want to use this without Spring Security, you need to disable `SecurityAutoConfiguration.class` on your `@SpringBootApplication`.
 
-On normal RestAPI development using Spring Framework, you shold be to create a domain/model, right? Well, thats 
-think is perfect, you have created your entity, for example (using Lombok @Data):
+On normal RestAPI development using Spring Framework, you should be to create a domain/model, right? ..for example (using Lombok `@Data`):
 
     @Data
     @Entity
@@ -60,9 +59,9 @@ Now, you want to create your repository, right? In this moment, Maker can help y
 
     public interface CarRepository extends RepositoryMaker<Car, Long> {}
     
-Awesome, you extends RepositoryMaker because RepositoryMaker implements all thinks JpaRepository implements and more, the JpaSpecificationExecutor.
+Awesome, you extends `RepositoryMaker.class` because `RepositoryMaker.class` implements all thinks JpaRepository implements and more, the `JpaSpecificationExecutor.class`.
 
-Now, you need to create a Specification for this entity, thats step is required for ServiceMaker and ResourceMaker work well.
+Now, you need to create a Specification Object for this entity, thats step is required for `ServiceMaker.class` and `ResourceMaker.class` works well.
 
     public class CarSpecification extends SpecificationBase<Car> {
     
@@ -71,18 +70,18 @@ Now, you need to create a Specification for this entity, thats step is required 
         }
     
         @Override
-        public Predicate toPredicate(Root<Car> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+        public List<Predicate> predicate(Root<Car> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, Car object) {
             List<Predicate> predicates = new ArrayList<>();
     
-            if (nonNull(getObject().getModel())) {
-                predicates.add(criteriaBuilder.like(root.get("model"), "%" + getObject().getModel() + "%"));
+            if (nonNull(object.getModel())) {
+                predicates.add(criteriaBuilder.like(root.get("model"), "%" + object.getModel() + "%"));
             }
     
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return predicates;
         }
     }
 
-Alright, the RepositoryMaker calls Specification.toPredicate inside Spring Framework, and call this overrided method and you can make your conditional search here, its very easy.
+Alright, Spring Framework call `Specification.toPredicate` and call `predicate` and you can make your conditional search here, its very easy.
 
 Now, you want to create a service to provide access to your database object.
     
@@ -91,10 +90,22 @@ Now, you want to create a service to provide access to your database object.
     
 Car, Long, Car? What?
 
-In your specification you can spec any object, by default, you need to search one Car, but you can pass here any object for spec, for example, you have a LocalDateTime comparison, you need to create a specification with
-start LocalDateTime and end LocalDateTime, and more spec's, in this situation you need to create a new object to spec.
+In your specification object you can specify anything, as long as that thing extends the entity.
 
-And now? What my projects do? Now your project provide a CarService, with a lot of pre-coded methods, includes one findAll/findAllPageable/insert/update/patch/delete.
+The `ServiceMaker.class` and `ResourceMaker.class` needs to know what is the **SPO** (Specification Object).
+
+The generic parameters are these, in order: 
+
+<ul>
+  <li>1. <strong>R</strong>, the Repository.</li>  
+  <li>2. <strong>T</strong>, the Entity.</li>
+  <li>3. <strong>ID</strong>, the type of entity ID.</li>
+  <li>4. <strong>SPO</strong>, the Specification Object.</li>  
+  <li>5. <strong>SP</strong>, the Specification.</li>
+</ul>
+
+And now? What my projects do? Now your project provide a CarService, with a lot of pre-coded methods, includes `findById`, `findAll`, 
+`findAllPageable`, `insert` `update`, `patch`, `delete`.
 
 So i need to create one resource to make my API? Yes, and Maker mades it for you!
 
@@ -102,6 +113,8 @@ So i need to create one resource to make my API? Yes, and Maker mades it for you
     @RequestMapping("/car")
     public class CarResource extends ResourceMaker<CarService, Car, Long, Car> {}
     
+If your API uses Spring @PreAuthorize resource, you need to extends the `SecurityResourceMaker.class` and override and make public the role methods.
+
 Now you have a lot of RestAPI methods and you can call them. Open your terminal and make a call on your server:port/context/car and enjoy!
 
 One example lives on https://github.com/gustavovitor/maker-example :)
