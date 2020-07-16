@@ -29,6 +29,8 @@ public interface ServiceInterface<T, ID, SP> {
     void afterDelete(T object);
     void onDeleteError(Throwable e, T object);
 
+    void validate(T object);
+
     Iterable<T> findAll(SP object) throws ReflectionException;
 
     T findById(ID objectId);

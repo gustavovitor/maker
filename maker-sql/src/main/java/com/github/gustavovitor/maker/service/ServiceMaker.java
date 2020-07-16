@@ -1,5 +1,6 @@
 package com.github.gustavovitor.maker.service;
 
+import com.github.gustavovitor.exceptions.ValidationException;
 import com.github.gustavovitor.interfaces.ServiceInterface;
 import com.github.gustavovitor.maker.GenericCallerInterpreter;
 import com.github.gustavovitor.maker.GenericErrorInterpreter;
@@ -7,6 +8,7 @@ import com.github.gustavovitor.maker.repository.RepositoryMaker;
 import com.github.gustavovitor.maker.repository.SpecificationBase;
 import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 
 import javax.management.ReflectionException;
 import javax.persistence.EntityNotFoundException;
@@ -33,6 +37,9 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
 
     @Autowired
     private R repository;
+
+    @Autowired
+    private SmartValidator validator;
 
     @Autowired(required = false)
     private GenericErrorInterpreter genericErrorInterpreter;
@@ -151,6 +158,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
                 genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
+            validate(savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
             afterPatch(savedObjectNow, object);
             return savedObjectNow;
@@ -205,6 +213,17 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     @Override
     public void onDeleteError(Throwable e, T object) {
 
+    }
+
+    @Override
+    public void validate(T object) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(object,
+                StringUtils.uncapitalize(object.getClass().getSimpleName()));
+        validator.validate(object, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
     }
 
     @Override
