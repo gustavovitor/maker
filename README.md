@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://i.imgur.com/GP4BOPK.png">
 
-  [![node](https://img.shields.io/badge/Maker-1.3.0-lightgray.svg)](https://github.com/gustavovitor/maker/tree/1.3.0)
+  [![node](https://img.shields.io/badge/Maker-1.4.0-lightgray.svg)](https://github.com/gustavovitor/maker/tree/1.4.0)
   feito por um brasileiro para desenvolvedores do mundo inteiro.
 </p>
 
@@ -34,7 +34,7 @@ and call API methods from Postman. Enjoy :)
     <dependency>
         <groupId>com.github.gustavovitor</groupId>
         <artifactId>maker-sql</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0</version>
     </dependency>
 
 ..or, you can use maker-mongo for MongoDB usage.
