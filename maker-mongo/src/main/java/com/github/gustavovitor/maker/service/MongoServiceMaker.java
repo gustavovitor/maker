@@ -81,17 +81,19 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     @Override
     public T insert(T object) {
         try {
+            beforeInsert(object);
+
             if (nonNull(genericCallerInterpreter))
                 genericCallerInterpreter.onInsert(this, repository, object);
-            beforeInsert(object);
             T savedObject = (T) repository.insert(object);
             afterInsert(savedObject);
             return savedObject;
         } catch (Exception e) {
+            onInsertError(e, object);
+
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onInsertError(this, repository, e, object);
 
-            onInsertError(e, object);
             throw e;
         }
     }
@@ -116,18 +118,20 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         try {
             T savedObject = findById(objectId);
             handleNotFoundException(savedObject);
+            beforeUpdate(savedObject, object);
+
             if (nonNull(genericCallerInterpreter))
                 genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
-            beforeUpdate(savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
             afterUpdate(savedObjectNow, object);
             return savedObjectNow;
         } catch (Exception e) {
+            onUpdateError(e, objectId, object);
+
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onUpdateError(this, repository, e, objectId, object);
 
-            onUpdateError(e, objectId, object);
             throw e;
         }
     }
@@ -152,18 +156,20 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         try {
             T savedObject = findById(objectId);
             handleNotFoundException(savedObject);
+            beforePatch(savedObject, object);
+
             if (nonNull(genericCallerInterpreter))
                 genericCallerInterpreter.onPatch(this, repository, savedObject, object);
-            beforePatch(savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             T savedObjectNow = (T) repository.save(savedObject);
             afterPatch(savedObjectNow, object);
             return savedObjectNow;
         } catch (Exception e) {
+            onPatchError(e, objectId, object);
+
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onPatchError(this, repository, e, objectId, object);
 
-            onPatchError(e, objectId, object);
             throw e;
         }
     }
@@ -188,16 +194,18 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
         T object = findById(objectId);
         try {
             handleNotFoundException(object);
+            beforeDelete(object);
+
             if (nonNull(genericCallerInterpreter))
                 genericCallerInterpreter.onDelete(this, repository, object);
-            beforeDelete(object);
             repository.delete(object);
             afterDelete(object);
         } catch (Exception e) {
+            onDeleteError(e, object);
+
             if (nonNull(genericErrorInterpreter))
                 genericErrorInterpreter.onDeleteError(this, repository, e, object);
 
-            onDeleteError(e, object);
             throw e;
         }
     }
