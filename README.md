@@ -11,6 +11,9 @@ Make your API better, create your own pattern and go to the stars!
 - [ ] Unit tests.
 - [ ] Complete documentation guide.
 
+## Continuous Integration
+![Java CI with Maven](https://github.com/gustavovitor/maker/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 # How is this?
 Boilerplate code? No more.
 
