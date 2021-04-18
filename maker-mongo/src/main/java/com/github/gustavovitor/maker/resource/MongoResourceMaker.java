@@ -2,12 +2,9 @@ package com.github.gustavovitor.maker.resource;
 
 import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.MongoServiceMaker;
-import com.github.gustavovitor.util.ObjectPageableRequest;
-import com.github.gustavovitor.util.RequestPageable;
+import com.github.gustavovitor.util.ObjectPageableRequestWithSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +14,7 @@ import javax.validation.Valid;
 
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
+import static com.github.gustavovitor.util.PageableUtils.getCustomPageable;
 
 @SuppressWarnings({"unchecked"})
 public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
@@ -43,8 +40,8 @@ public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> impleme
 
     @Override
     @PutMapping("/search/page")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
-        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequestWithSort<SPO> request) throws ReflectionException {
+        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getCustomPageable(request.getPageable())));
     }
 
     @Override
@@ -70,13 +67,6 @@ public class MongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> impleme
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable ID objectId) {
         service.delete(objectId);
-    }
-
-    protected Pageable getPageable(RequestPageable pageable) {
-        if (nonNull(pageable.getSort()))
-            return PageRequest.of(pageable.getPage(), pageable.getSize(), pageable.getSort());
-        else
-            return PageRequest.of(pageable.getPage(), pageable.getSize());
     }
 
 }

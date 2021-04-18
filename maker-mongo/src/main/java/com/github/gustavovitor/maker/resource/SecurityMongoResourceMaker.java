@@ -2,7 +2,7 @@ package com.github.gustavovitor.maker.resource;
 
 import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.MongoServiceMaker;
-import com.github.gustavovitor.util.ObjectPageableRequest;
+import com.github.gustavovitor.util.ObjectPageableRequestWithSort;
 import com.github.gustavovitor.util.RequestPageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 import java.util.Map;
 
+import static com.github.gustavovitor.util.RequestPageableWithSort.getCustomPageable;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
@@ -47,8 +48,8 @@ public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO>
     @Override
     @PutMapping("/search/page")
     @PreAuthorize("hasAnyAuthority(#root.this.roleRead)")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
-        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequestWithSort<SPO> request) throws ReflectionException {
+        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getCustomPageable(request.getPageable())));
     }
 
     @Override
@@ -90,13 +91,6 @@ public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO>
 
     protected String[] getRoleDelete() {
         return new String[]{""};
-    }
-
-    protected Pageable getPageable(RequestPageable pageable) {
-        if (nonNull(pageable.getSort()))
-            return PageRequest.of(pageable.getPage(), pageable.getSize(), pageable.getSort());
-        else
-            return PageRequest.of(pageable.getPage(), pageable.getSize());
     }
 
 }

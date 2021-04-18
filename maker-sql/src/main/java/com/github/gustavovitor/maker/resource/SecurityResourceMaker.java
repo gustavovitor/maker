@@ -2,7 +2,7 @@ package com.github.gustavovitor.maker.resource;
 
 import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.ServiceMaker;
-import com.github.gustavovitor.util.ObjectPageableRequest;
+import com.github.gustavovitor.util.ObjectPageableRequestWithSort;
 import com.github.gustavovitor.util.RequestPageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +17,7 @@ import javax.management.ReflectionException;
 import javax.validation.Valid;
 import java.util.Map;
 
+import static com.github.gustavovitor.util.PageableUtils.getCustomPageable;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
@@ -46,8 +47,8 @@ public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implement
     @Override
     @PutMapping("/search/page")
     @PreAuthorize("hasAnyAuthority(#root.this.roleRead)")
-    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequest<SPO> request) throws ReflectionException {
-        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getPageable(request.getPageable())));
+    public ResponseEntity<Page<T>> findAllPageable(@RequestBody ObjectPageableRequestWithSort<SPO> request) throws ReflectionException {
+        return ResponseEntity.ok(service.findAllPageable(request.getObject(), getCustomPageable(request.getPageable())));
     }
 
     @Override
