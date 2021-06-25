@@ -4,9 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.management.ReflectionException;
+import java.io.Serializable;
 import java.util.Map;
 
-public interface ServiceInterface<T, ID, SP> {
+public interface ServiceInterface<T extends Serializable, ID, SP> {
     Page<T> findAllPageable(SP object, Pageable pageable) throws ReflectionException;
 
     void beforeInsert(T object);
@@ -16,12 +17,12 @@ public interface ServiceInterface<T, ID, SP> {
 
     void beforeUpdate(T savedObject, T object);
     T update(ID objectId, T object);
-    void afterUpdate(T savedObject, T object);
+    void afterUpdate(T oldObject, T object, T savedObject);
     void onUpdateError(Throwable e, ID objectId, T object);
 
     void beforePatch(T savedObject, Map<String, Object> object);
     T patch(ID objectId, Map<String, Object> object, String... ignoreProperties);
-    void afterPatch(T savedObject, Map<String, Object> object);
+    void afterPatch(T oldObject, Map<String, Object> object, T savedObject);
     void onPatchError(Throwable e, ID objectId, Map<String, Object> object);
 
     void beforeDelete(T object);

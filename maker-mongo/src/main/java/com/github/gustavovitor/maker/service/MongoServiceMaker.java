@@ -9,6 +9,7 @@ import com.github.gustavovitor.maker.repository.MongoSpecificationBase;
 import com.github.gustavovitor.maker.service.exceptions.DocumentNotFoundException;
 import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -21,6 +22,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
 
 import javax.management.ReflectionException;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -32,7 +34,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
-public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP extends MongoSpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
+public class MongoServiceMaker<R extends MongoRepositoryMaker, T extends Serializable, ID, SPO, SP extends MongoSpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;
@@ -117,6 +119,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     public T update(ID objectId, T object) {
         try {
             T savedObject = findById(objectId);
+            T oldObject = (T) SerializationUtils.clone(savedObject);
             handleNotFoundException(savedObject);
             beforeUpdate(savedObject, object);
 
@@ -124,7 +127,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
                 genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
-            afterUpdate(savedObjectNow, object);
+            afterUpdate(oldObject, object, savedObjectNow);
             return savedObjectNow;
         } catch (Exception e) {
             onUpdateError(e, objectId, object);
@@ -137,7 +140,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public void afterUpdate(T savedObject, T object) {
+    public void afterUpdate(T oldObject, T object, T savedObject) {
 
     }
 
@@ -155,6 +158,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         try {
             T savedObject = findById(objectId);
+            T oldObject = (T) SerializationUtils.clone(savedObject);
             handleNotFoundException(savedObject);
             beforePatch(savedObject, object);
 
@@ -162,7 +166,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
                 genericCallerInterpreter.onPatch(this, repository, savedObject, object);
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             T savedObjectNow = (T) repository.save(savedObject);
-            afterPatch(savedObjectNow, object);
+            afterPatch(oldObject, object, savedObjectNow);
             return savedObjectNow;
         } catch (Exception e) {
             onPatchError(e, objectId, object);
@@ -175,7 +179,7 @@ public class MongoServiceMaker<R extends MongoRepositoryMaker, T, ID, SPO, SP ex
     }
 
     @Override
-    public void afterPatch(T savedObject, Map<String, Object> object) {
+    public void afterPatch(T oldObject, Map<String, Object> object, T savedObject) {
 
     }
 

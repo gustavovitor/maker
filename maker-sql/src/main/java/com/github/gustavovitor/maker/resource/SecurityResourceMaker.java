@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.util.Map;
 
 import static com.github.gustavovitor.util.PageableUtils.getCustomPageable;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class SecurityResourceMaker<S extends ServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
+public class SecurityResourceMaker<S extends ServiceMaker, T extends Serializable, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;

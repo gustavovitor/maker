@@ -2,28 +2,22 @@ package com.github.gustavovitor.maker.resource;
 
 import com.github.gustavovitor.interfaces.ResourceInterface;
 import com.github.gustavovitor.maker.service.ServiceMaker;
-import com.github.gustavovitor.util.ObjectPageableRequest;
 import com.github.gustavovitor.util.ObjectPageableRequestWithSort;
-import com.github.gustavovitor.util.RequestPageable;
-import com.github.gustavovitor.util.RequestPageableWithSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.ReflectionException;
 import javax.validation.Valid;
-import java.util.List;
+import java.io.Serializable;
 import java.util.Map;
 
 import static com.github.gustavovitor.util.PageableUtils.getCustomPageable;
-import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class ResourceMaker<S extends ServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
+public class ResourceMaker<S extends ServiceMaker, T extends Serializable, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;

@@ -8,6 +8,7 @@ import com.github.gustavovitor.maker.repository.RepositoryMaker;
 import com.github.gustavovitor.maker.repository.SpecificationBase;
 import com.github.gustavovitor.util.EntityUtils;
 import com.github.gustavovitor.util.MessageUtil;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -21,6 +22,7 @@ import org.springframework.validation.SmartValidator;
 
 import javax.management.ReflectionException;
 import javax.persistence.EntityNotFoundException;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -33,7 +35,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked", "SpringJavaInjectionPointsAutowiringInspection"})
-public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends SpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
+public class ServiceMaker<R extends RepositoryMaker, T extends Serializable, ID, SPO, SP extends SpecificationBase<SPO>> implements ServiceInterface<T, ID, SPO> {
 
     @Autowired
     private R repository;
@@ -119,13 +121,14 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     public T update(ID objectId, T object) {
         try {
             T savedObject = findById(objectId);
+            T oldObject = (T) SerializationUtils.clone(savedObject);
             handleNotFoundException(savedObject);
             beforeUpdate(savedObject, object);
             if (nonNull(genericCallerInterpreter))
                 genericCallerInterpreter.onUpdate(this, repository, savedObject, object);
             BeanUtils.copyProperties(object, savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
-            afterUpdate(savedObjectNow, object);
+            afterUpdate(oldObject, object, savedObjectNow);
             return savedObjectNow;
         } catch (Exception e) {
             onUpdateError(e, objectId, object);
@@ -138,7 +141,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public void afterUpdate(T savedObject, T object) {
+    public void afterUpdate(T oldObject, T object, T savedObject) {
 
     }
 
@@ -156,6 +159,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     public T patch(ID objectId, Map<String, Object> object, String... ignoreProperties) {
         try {
             T savedObject = findById(objectId);
+            T oldObject = (T) SerializationUtils.clone(savedObject);
             handleNotFoundException(savedObject);
             beforePatch(savedObject, object);
             if (nonNull(genericCallerInterpreter))
@@ -163,7 +167,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
             EntityUtils.merge(object, savedObject, savedObject.getClass());
             validate(savedObject);
             T savedObjectNow = (T) repository.save(savedObject);
-            afterPatch(savedObjectNow, object);
+            afterPatch(oldObject, object, savedObjectNow);
             return savedObjectNow;
         } catch (Exception e) {
             onPatchError(e, objectId, object);
@@ -176,7 +180,7 @@ public class ServiceMaker<R extends RepositoryMaker, T, ID, SPO, SP extends Spec
     }
 
     @Override
-    public void afterPatch(T savedObject, Map<String, Object> object) {
+    public void afterPatch(T oldObject, Map<String, Object> object, T savedObject) {
 
     }
 

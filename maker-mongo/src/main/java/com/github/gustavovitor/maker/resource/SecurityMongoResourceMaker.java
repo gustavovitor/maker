@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.management.ReflectionException;
 import javax.validation.Valid;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import static com.github.gustavovitor.util.RequestPageableWithSort.getCustomPageable;
 import static java.util.Objects.nonNull;
 
 @SuppressWarnings({"unchecked"})
-public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
+public class SecurityMongoResourceMaker<S extends MongoServiceMaker, T extends Serializable, ID, SPO> implements ResourceInterface<S, T, ID, SPO> {
 
     @Autowired
     private S service;
